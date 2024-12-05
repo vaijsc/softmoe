@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=softdeit
-#SBATCH --output=/lustre/scratch/client/vinai/users/phinh2/workspace/soft_moe/result/soft_moe.txt
-#SBATCH --error=/lustre/scratch/client/vinai/users/phinh2/workspace/soft_moe/result/soft_moe_err.txt
+#SBATCH --output=/lustre/scratch/client/vinai/users/phinh2/workspace/softmoe/result/soft_moe.txt
+#SBATCH --error=/lustre/scratch/client/vinai/users/phinh2/workspace/softmoe/result/soft_moe_err.txt
 #SBATCH --nodes=1
 #SBATCH --gpus-per-node=2
 #SBATCH --nodelist=sdc2-hpc-dgx-a100-016
@@ -21,5 +21,5 @@ echo $CUDA_VISIBLE_DEVICES
 
 echo "Training ..."
 python -m torch.distributed.launch --nproc_per_node=2 --use_env main.py --model soft_moe_vit_tiny --batch-size 256 \
- --data-path /lustre/scratch/client/vinai/users/phinh2/workspace/dataset/imagenet --output_dir /lustre/scratch/client/vinai/users/phinh2/workspace/soft_moe/result/soft_moe
+ --data-path /lustre/scratch/client/vinai/users/phinh2/workspace/dataset/imagenet --output_dir /lustre/scratch/client/vinai/users/phinh2/workspace/softmoe/result/soft_moe
 
