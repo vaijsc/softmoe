@@ -1,10 +1,10 @@
 #!/bin/bash
-#SBATCH --job-name=softdeit
+#SBATCH --job-name=sopfbell
 #SBATCH --output=/lustre/scratch/client/vinai/users/phinh2/workspace/softmoe/result/soft_moe_mfbell.txt
 #SBATCH --error=/lustre/scratch/client/vinai/users/phinh2/workspace/softmoe/result/soft_moe_mfbell_err.txt
 #SBATCH --nodes=1
 #SBATCH --gpus-per-node=2
-#SBATCH --nodelist=sdc2-hpc-dgx-a100-016
+#SBATCH --nodelist=sdc2-hpc-dgx-a100-015
 #SBATCH --mem-per-gpu=50G
 #SBATCH --cpus-per-gpu=24
 #SBATCH --partition=research
