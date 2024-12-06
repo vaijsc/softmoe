@@ -12,7 +12,7 @@ from timm.models.vision_transformer import (Block, _load_weights,
                                             get_init_weights_vit,
                                             init_weights_vit_timm)
 from timm.models.registry import register_model
-from soft_moe import SoftMoELayerWrapper
+from soft_moe2 import SoftMoELayerWrapper
 
 
 class SoftMoEVisionTransformer(nn.Module):
