@@ -20,6 +20,6 @@ echo "Running"
 echo $CUDA_VISIBLE_DEVICES
 
 echo "Training ..."
-python -m torch.distributed.launch --nproc_per_node=2 --use_env main.py --model soft_moe_vit_tiny --batch-size 256 \
+python -m torch.distributed.launch --nproc_per_node=2 --master_port=2412 --use_env main.py --model soft_moe_vit_tiny --batch-size 256 \
  --data-path /lustre/scratch/client/vinai/users/phinh2/workspace/dataset/imagenet --output_dir /lustre/scratch/client/vinai/users/phinh2/workspace/softmoe/result/soft_moe1
 
