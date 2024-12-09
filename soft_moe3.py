@@ -69,7 +69,8 @@ class SoftMoELayerWrapper(nn.Module):
         self.experts = nn.ModuleList(
             [layer(**layer_kwargs) for _ in range(num_experts)]
         )
-
+        self.additional_params = nn.Parameter(torch.ones(1, 1, 192))
+        
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Forward pass through the Soft-MoE layer (algorithm 1 from paper).
@@ -109,18 +110,15 @@ class SoftMoELayerWrapper(nn.Module):
 
         # Compute output tokens as weighted average of output slots using combine weights
         y = torch.einsum("bnpd,bmnp->bmd", ys, c)  # torch.Size([256, 197, 192])
-
-        # Compute similarity matrix
-        mean = x[:, 1:, :].mean(dim=1, keepdim=True)
-        std = x[:, 1:, :].std(dim=1, keepdim=True)
-        norm_matrix = (x[:, 1:, :] - mean) / std
-        similarity_matrix = torch.matmul(norm_matrix, norm_matrix.transpose(1, 2))
+        y = y * x
+        expand_dim = self.additional_params.expand(y.shape[0], y.shape[1], -1)  # [256, 197, 192]
+        y = y * expand_dim
+        
+        similarity_matrix = torch.matmul(x, x.transpose(1, 2))  # [batch_size, seq_length, seq_length]
+        # Use the lower triangular part of the similarity matrix
         similarity_matrix = torch.tril(similarity_matrix)
-
-        # Create a new tensor for updated y to avoid in-place operations
-        y_new = y.clone()
-        y_new[:, 1:, :] = torch.matmul(similarity_matrix, y[:, 1:, :]) * x[:, 1:, :]
-        y_new[:, 0, :] = y[:, 0, :]  # Keep CLS token unchanged
-
-        return y_new
+        # Step 3: Normalize similarities using softmax
+        normalized_similarity = F.softmax(similarity_matrix, dim=-1)  # [batch_size, seq_length, seq_length]
+        y = torch.matmul(normalized_similarity, y)  # Out-of-place update
+        return y
 
